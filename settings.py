@@ -24,8 +24,8 @@ class fwSettings(object):
 
     # Physics options
     hz=60.0
-    velocityIterations=10
-    positionIterations=8
+    velocityIterations=20
+    positionIterations=20
     enableWarmStarting=True   # Makes physics results more accurate (see Box2D wiki)
     enableTOI=True            # Calculate time of impact
 

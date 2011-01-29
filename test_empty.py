@@ -32,6 +32,8 @@ http://docs.scipy.org/doc/scipy/reference/interpolate.html
 from test_main import *
 import cv
 from random import random
+import p2t
+
 
 
 class Empty(Framework):
@@ -78,7 +80,7 @@ class Empty(Framework):
     def CreateRandomBoxes(self, count):
         sd=box2d.b2PolygonDef()
 
-        a = 0.2
+        a = 0.1
         sd.SetAsBox(a, a)
         sd.density = 5.0
         sd.restitution = 0.6
@@ -118,7 +120,7 @@ class Empty(Framework):
         self.camera = cv.CaptureFromCAM(-1)
 
     def GetFrame(self):
-        src = cv.LoadImageM("test.png")
+        src = cv.LoadImageM("images/test.png")
         #src = cv.QueryFrame(self.camera)
         cv.Flip(src);
         try:
@@ -145,23 +147,17 @@ class Empty(Framework):
       storage = cv.CreateMemStorage(0)
 
       # detect objects
-      cv.Threshold(grayscale, grayscale, 125, 255, cv.CV_THRESH_BINARY)
+      cv.Threshold(grayscale, grayscale, 50, 255, cv.CV_THRESH_BINARY)
       self.contours = cv.FindContours(grayscale, cv.CreateMemStorage(), cv.CV_RETR_TREE, cv.CV_CHAIN_APPROX_SIMPLE)
       #mame kontury potrebujeme fyziku
       #cv.DrawContours(image, self.contours, cv.RGB(255, 110, 0),cv.RGB(0, 255, 0), 10, 1)
       if len(self.contours) > 0:
-        self.contours = cv.ApproxPoly (self.contours, storage, cv.CV_POLY_APPROX_DP, 2, 1)
+        self.contours = cv.ApproxPoly (self.contours, storage, cv.CV_POLY_APPROX_DP, 1, 1)
       return self.contours
 
 
 
     def CreateContour(self, cont, h,v):
-      weight=box2d.b2CircleDef()
-      #weight.filter.maskBits = 0
-      weight.radius = 0.1
-      weight.density = 5.0
-      weight.restitution = 0.5
-      weight.friction = 0.6
 
       edgeDef=box2d.b2EdgeChainDef()
       #konverzia jednotiek do reozmeru 0.1m - 10m
@@ -179,7 +175,9 @@ class Empty(Framework):
           self.contourBodies.append(body)
         except:
           self.contourBodies = [body]
-      else:
+        body.CreateShape(edgeDef)
+
+      """else:
         try:
           body = self.objectBodies[h+self.frameNumber*100000]
           print "Pripajam cast prvku %i" % h
@@ -190,9 +188,38 @@ class Empty(Framework):
         for point in contM:
           weight.localPosition = (point)
           body.CreateShape(weight)
+      """
+      #teselacia
+      if v == 1:
+        try:
+          body = self.objectBodies[h+self.frameNumber*100000]
+          print "Pripajam cast prvku %i" % h
+        except:
+          print "Vytvaram body opre prvok %i" % h
+          body = self.world.CreateBody(bd)
+          self.objectBodies[h+self.frameNumber*100000] = body
+        polyline = []
+        for (x,y) in cont:
+          polyline.append(p2t.Point(x,y))
+          
+        cdt = p2t.CDT(polyline)
+        triangles = cdt.triangulate()
 
-      body.CreateShape(edgeDef)
-      body.SetMassFromShapes()
+        for t in triangles:
+          x1 = t.a.x/30.0
+          y1 = t.a.y/30.0
+          x2 = t.b.x/30.0
+          y2 = t.b.y/30.0
+          x3 = t.c.x/30.0
+          y3 = t.c.y/30.0
+          poly=box2d.b2PolygonDef()
+          poly.setVertices(((x1, y1), (x2, y2), (x3, y3)))
+          poly.density = 5.0
+          poly.restitution = 0.5
+          poly.friction = 0.6
+          body.CreateShape(poly)
+          body.SetMassFromShapes()
+
 
 
     def DestroyContours(self):
