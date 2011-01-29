@@ -214,9 +214,9 @@ class Empty(Framework):
           y3 = t.c.y/30.0
           poly=box2d.b2PolygonDef()
           poly.setVertices(((x1, y1), (x2, y2), (x3, y3)))
-          poly.density = 5.0
-          poly.restitution = 0.5
-          poly.friction = 0.6
+          poly.density = 1.0
+          poly.restitution = 0.0
+          poly.friction = 0.0
           body.CreateShape(poly)
           body.SetMassFromShapes()
 
