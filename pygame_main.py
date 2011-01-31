@@ -437,8 +437,8 @@ class Framework(object):
     def __init__(self):
         # Box2D Initialization
         self.worldAABB=box2d.b2AABB()
-        self.worldAABB.lowerBound = (-200.0, -100.0)
-        self.worldAABB.upperBound = ( 500.0, 500.0)
+        self.worldAABB.lowerBound = (-100.0, -100.0)
+        self.worldAABB.upperBound = ( 600.0, 600.0)
         gravity = (0.0, -10.0)
 
         doSleep = True

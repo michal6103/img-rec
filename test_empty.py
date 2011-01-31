@@ -33,6 +33,7 @@ from test_main import *
 import cv
 from random import random
 import p2t
+import sys
 
 
 
@@ -48,6 +49,7 @@ class Empty(Framework):
         Be sure to call the Framework's initializer first.
         """
         super(Empty, self).__init__()
+        #sys.setrecursionlimit(15000)
         self.countrours =(0,0)
         self.objectBodies = {}
         self.step = 0
@@ -120,8 +122,8 @@ class Empty(Framework):
         self.camera = cv.CaptureFromCAM(-1)
 
     def GetFrame(self):
-        src = cv.LoadImageM("images/test.png")
-        #src = cv.QueryFrame(self.camera)
+        #src = cv.LoadImageM("images/test.png")
+        src = cv.QueryFrame(self.camera)
         cv.Flip(src);
         try:
           self.frameNumber += 1
@@ -158,7 +160,6 @@ class Empty(Framework):
 
 
     def CreateContour(self, cont, h,v):
-
       edgeDef=box2d.b2EdgeChainDef()
       #konverzia jednotiek do reozmeru 0.1m - 10m
       contM = []
@@ -250,11 +251,11 @@ class Empty(Framework):
     def CreateObjectsFromCountours(self,cont,h=0,v=0):
       print (h,v)
       if v>0:
-        density = 10
+        density = 10.0
       else:
         density = 0
 
-      if len(cont) > 4:
+      if len(cont)>3  and len(cont)<40  or v==0:
         self.CreateContour(cont,h,v)
 
       if cont.v_next():
@@ -308,8 +309,8 @@ class Empty(Framework):
         If placed at the beginning, it will cause the actual physics step to happen first.
         If placed at the end, it will cause the physics step to happen after your code.
         """
-        if self.step % 200 == 0:
-          self.CreateRandomBoxes(1)
+        #if self.step % 200 == 0:
+        #  self.CreateRandomBoxes(1)
           #self.CreateRandomSpheres(100)
 
 #        if self.step % 200 == 0:
@@ -326,7 +327,7 @@ class Empty(Framework):
 
         # do stuff
 
-        self.step = self.step +1
+        self.step = self.step + 1
         # Placed after the physics step, it will draw on top of physics objects
         #self.DrawStringCR("Test")
 
