@@ -259,8 +259,12 @@ class fwDebugDraw(box2d.b2DebugDraw):
         """
         color = self.convertColor(color)
         vertices = [self.toScreen(v) for v in in_vertices]
-        pygame.draw.polygon(self.surface, (color[0]/2, color[1]/2, color[1]/2, 127), vertices, 0)
-        pygame.draw.polygon(self.surface, color, vertices, 1)
+        try:
+          pygame.draw.polygon(self.surface, (color[0]/2, color[1]/2, color[1]/2, 127), vertices, 0)
+          pygame.draw.polygon(self.surface, color, vertices, 1)
+        except Exception as ex:
+          print "Draw polygon failed"
+          print ex
 
     def toScreen_v(self, pt):
         """

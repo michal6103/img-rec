@@ -34,6 +34,7 @@ import cv
 from random import random
 import p2t
 import sys
+import math
 
 
 
@@ -164,7 +165,9 @@ class Empty(Framework):
       #konverzia jednotiek do reozmeru 0.1m - 10m
       contM = []
       for point in cont:
-        contM.append((point[0]/30.0,point[1]/30.0))
+        x = point[0]/30.0
+        y = point[1]/30.0
+        contM.append((x,y))
       edgeDef.setVertices(contM)
 
       bd=box2d.b2BodyDef()
@@ -201,7 +204,18 @@ class Empty(Framework):
           self.objectBodies[h+self.frameNumber*100000] = body
         polyline = []
         for (x,y) in cont:
+          try:
+            #osetrime prilis kratke vektory, tak aby vsetko malo velkost aspon 0,1
+            if math.hypot(x-old_x,y-old_y)<3:
+              x = x + math.copysign(3, x-old_x)
+              y = y + math.copysign(3, y-old_y)
+              print "kratky vektor"
+          except:
+            pass
+          old_x = x
+          old_y = y
           polyline.append(p2t.Point(x,y))
+          
           
         cdt = p2t.CDT(polyline)
         triangles = cdt.triangulate()
