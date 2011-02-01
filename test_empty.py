@@ -50,7 +50,7 @@ class Empty(Framework):
         Be sure to call the Framework's initializer first.
         """
         super(Empty, self).__init__()
-        #sys.setrecursionlimit(15000)
+        sys.setrecursionlimit(1500)
         self.countrours =(0,0)
         self.objectBodies = {}
         self.step = 0
@@ -155,7 +155,7 @@ class Empty(Framework):
       #mame kontury potrebujeme fyziku
       #cv.DrawContours(image, self.contours, cv.RGB(255, 110, 0),cv.RGB(0, 255, 0), 10, 1)
       if len(self.contours) > 0:
-        self.contours = cv.ApproxPoly (self.contours, storage, cv.CV_POLY_APPROX_DP, 1, 1)
+        self.contours = cv.ApproxPoly (self.contours, storage, cv.CV_POLY_APPROX_DP, 1.5, 1)
       return self.contours
 
 
@@ -204,16 +204,6 @@ class Empty(Framework):
           self.objectBodies[h+self.frameNumber*100000] = body
         polyline = []
         for (x,y) in cont:
-          try:
-            #osetrime prilis kratke vektory, tak aby vsetko malo velkost aspon 0,1
-            if math.hypot(x-old_x,y-old_y)<3:
-              x = x + math.copysign(3, x-old_x)
-              y = y + math.copysign(3, y-old_y)
-              print "kratky vektor"
-          except:
-            pass
-          old_x = x
-          old_y = y
           polyline.append(p2t.Point(x,y))
           
           
@@ -227,6 +217,20 @@ class Empty(Framework):
           y2 = t.b.y/30.0
           x3 = t.c.x/30.0
           y3 = t.c.y/30.0
+          #osetrime prilis male trojuholniky
+          if math.hypot(x2-x1,y2-y1)<0.1:
+            x2 = x2 + math.copysign(0.1, x2-x1)
+            y2 = y2 + math.copysign(0.1, y2-y1)
+            print "kratky vektor"
+          if math.hypot(x3-x2,y3-y2)<0.1:
+            x3 = x3 + math.copysign(0.1, x3-x2)
+            y3 = y3 + math.copysign(0.1, y3-y2)
+            print "kratky vektor"
+          if math.hypot(x1-x3,y1-y3)<0.1:
+            x1 = x1 + math.copysign(0.1, x1-x3)
+            y1 = y1 + math.copysign(0.1, y1-y3)
+            print "kratky vektor"
+
           poly=box2d.b2PolygonDef()
           poly.setVertices(((x1, y1), (x2, y2), (x3, y3)))
           poly.density = 1.0
@@ -269,7 +273,7 @@ class Empty(Framework):
       else:
         density = 0
 
-      if len(cont)>3  and len(cont)<40  or v==0:
+      if len(cont)>8:
         self.CreateContour(cont,h,v)
 
       if cont.v_next():
@@ -301,7 +305,7 @@ class Empty(Framework):
 
         if key == K_i:
           self.DestroyContours()
-          #self.DestroyObjects()
+          self.DestroyObjects()
           self.GetFrame()
           self.CreateObjectsFromCountours(self.contours)
 
