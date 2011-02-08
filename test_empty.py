@@ -123,14 +123,16 @@ class Empty(Framework):
         self.camera = cv.CaptureFromCAM(-1)
 
     def GetFrame(self):
-        #src = cv.LoadImageM("images/test.png")
-        src = cv.QueryFrame(self.camera)
+        src = cv.LoadImageM("images/test.png")
+        #src = cv.QueryFrame(self.camera)
         cv.Flip(src);
         try:
           self.frameNumber += 1
         except:
           self.frameNumber = 0
         self.contours = self.DetectOutline(src)
+        
+
         #src_rgb = cv.CreateMat(src.height, src.width, cv.CV_8UC3)
         #cv.CvtColor(src, src_rgb, cv.CV_BGR2RGB)
         #pygame_img = pygame.image.frombuffer(src_rgb.tostring(), cv.GetSize(src_rgb), "RGB")
@@ -238,8 +240,6 @@ class Empty(Framework):
           poly.friction = 0.0
           body.CreateShape(poly)
           body.SetMassFromShapes()
-
-
 
     def DestroyContours(self):
       print "Skusam z mazat kontury"
