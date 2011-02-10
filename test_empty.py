@@ -105,7 +105,7 @@ class Empty(Framework):
         #a = 1.5
         #sd.SetAsBox(a, a)
         sd.density = 1.0
-        sd.restitution = 0.1
+        sd.restitution = 0.6
         sd.friction = 0.1
         x=box2d.b2Vec2(0, 0)
         for i in range(count):
@@ -327,21 +327,8 @@ class Empty(Framework):
         If placed at the beginning, it will cause the actual physics step to happen first.
         If placed at the end, it will cause the physics step to happen after your code.
         """
-        #if self.step % 200 == 0:
-        #  self.CreateRandomBoxes(1)
-          #self.CreateRandomSpheres(100)
 
-#        if self.step % 200 == 0:
-#          self.DestroyContours()
-#          self.DestroyObjects()
-#          self.GetFrame()
-#          self.CreateObjectsFromCountours(self.contours)
-
-        #r = random()*20
-        #cont = ((40+r,40+r),(45+r,40+r),(45+r,45+r),(41+r,51+r))
-        #self.pulsar.setVertices(cont)
         super(Empty, self).Step(settings)
-
 
         # do stuff
 

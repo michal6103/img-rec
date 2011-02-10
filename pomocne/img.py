@@ -4,7 +4,7 @@ import cv
 
 def printCont(img,cont,h=0,v=0,col = (0,0,0)):
 
-  if v==0:
+  if v==1:
     print str((h,v)) + "*"
     col = (255,0,0)
   else:
